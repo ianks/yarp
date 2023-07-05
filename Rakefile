@@ -67,7 +67,7 @@ namespace :rust do
 
   task test: :make do
     ENV["RUSTFLAGS"] = "-C link-arg=#{Dir.pwd}/build/librubyparser.a"
-    sh "cargo test -p yarp-sys"
+    sh "cargo test -p yarp-sys -- --nocapture"
   end
 end
 
