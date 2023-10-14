@@ -60,9 +60,20 @@ task generate_compilation_database: [:clobber, :templates] do
   sh "bear -- make"
 end
 
+namespace :rust do
+  task bindgen: :make do
+    sh "cargo run -p yarp-bindgen --quiet"
+  end
+
+  task test: :make do
+    ENV["RUSTFLAGS"] = "-C link-arg=#{Dir.pwd}/build/librubyparser.a"
+    sh "cargo test -p yarp-sys -- --nocapture"
+  end
+end
+
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
-CLOBBER.concat(["configure", "Makefile", "build"])
+CLOBBER.concat(["configure", "Makefile", "build", "target"])
 CLOBBER << Rake::FileList.new("src/**/*.o")
 CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
